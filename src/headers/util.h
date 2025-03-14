@@ -1,18 +1,13 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef __OXEY_UTIL_H
+#define __OXEY_UTIL_H
 
-#define MIN(a, b)               \
-    ({                          \
-        __typeof__(a) _a = (a); \
-        __typeof__(b) _b = (b); \
-        _a < _b ? _a : _b;      \
-    })
+#include <stddef.h>
+#include <stdint.h>
 
-#define MAX(a, b)               \
-    ({                          \
-        __typeof__(a) _a = (a); \
-        __typeof__(b) _b = (b); \
-        _a > _b ? _a : _b;      \
-    })
+#define VOID_PTR_ADD(ptr, offset) ((void*)((char*)(ptr) + (offset)))
+
+static inline size_t min(size_t a, size_t b) { return a < b ? a : b; }
+
+static inline size_t max(size_t a, size_t b) { return a > b ? a : b; }
 
 #endif

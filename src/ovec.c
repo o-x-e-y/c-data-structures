@@ -24,8 +24,8 @@ vec_t new_vec(size_t item_capacity, size_t elem_size) {
 void free_vec(vec_t* vec, void elem_destructor(void*)) {
     if (vec != NULL) {
         if (elem_destructor != NULL) {
-            for (void* ptr = vec->ptr; ptr < vec->ptr + vec->capacity; ptr += vec->elem_size) {
-                elem_destructor(ptr);
+            for (size_t i = 0; i < vec->len; ++i) {
+                elem_destructor(VOID_PTR_ADD(vec->ptr, i * vec->elem_size));
             }
         }
 
@@ -46,7 +46,7 @@ void* get_vec(vec_t* vec, size_t index) {
         return NULL;
     } else {
         size_t offset = index * vec->elem_size;
-        return vec->ptr + offset;
+        return VOID_PTR_ADD(vec->ptr, offset);
     }
 }
 
@@ -82,7 +82,7 @@ bool eq_vec(vec_t* lhs, vec_t* rhs) {
     }
 
     for (size_t i = 0; i < lhs->len * lhs->elem_size; ++i) {
-        if (CAST(lhs->ptr + i, uint8_t) != CAST(rhs->ptr + i, uint8_t)) {
+        if (CAST(VOID_PTR_ADD(lhs->ptr, i), uint8_t) != CAST(VOID_PTR_ADD(rhs->ptr, i), uint8_t)) {
             return false;
         }
     }
@@ -97,8 +97,9 @@ void push_vec(vec_t* vec, void* elem) {
     __grow_vec(vec);
 
     size_t offset = vec->len * vec->elem_size;
+    void* dst_ptr = VOID_PTR_ADD(vec->ptr, offset);
 
-    memcpy(vec->ptr + offset, elem, vec->elem_size);
+    memcpy(dst_ptr, elem, vec->elem_size);
 
     vec->len++;
 }
@@ -109,7 +110,7 @@ void set_vec(vec_t* vec, void* elem, size_t index) {
     assert(index < vec->len);
 
     size_t offset = index * vec->elem_size;
-    void* dst_ptr = vec->ptr + offset;
+    void* dst_ptr = VOID_PTR_ADD(vec->ptr, offset);
 
     memcpy(dst_ptr, elem, vec->elem_size);
 }
@@ -123,7 +124,7 @@ void* pop_vec(vec_t* vec) {
         vec->len--;
         size_t offset = vec->len * vec->elem_size;
 
-        return vec->ptr + offset;
+        return VOID_PTR_ADD(vec->ptr, offset);
     }
 }
 
@@ -143,8 +144,8 @@ void insert_vec(vec_t* vec, void* elem, size_t index) {
 
     size_t offset = index * vec->elem_size;
 
-    void* src_ptr = vec->ptr + offset;
-    void* dst_ptr = vec->ptr + offset + vec->elem_size;
+    void* src_ptr = VOID_PTR_ADD(vec->ptr, offset);
+    void* dst_ptr = VOID_PTR_ADD(vec->ptr, offset + vec->elem_size);
     size_t copy_len = (vec->len - index) * vec->elem_size;
 
     memmove(dst_ptr, src_ptr, copy_len);
@@ -156,8 +157,8 @@ void remove_vec(vec_t* vec, size_t index) {
 
     if (index < vec->len) {
         size_t offset = index * vec->elem_size;
-        void* src_ptr = vec->ptr + offset + vec->elem_size;
-        void* dst_ptr = vec->ptr + offset;
+        void* src_ptr = VOID_PTR_ADD(vec->ptr, offset + vec->elem_size);
+        void* dst_ptr = VOID_PTR_ADD(vec->ptr, offset);
         size_t copy_len = (vec->len - index) * vec->elem_size;
 
         memcpy(dst_ptr, src_ptr, copy_len);
@@ -186,7 +187,7 @@ void resize_vec(vec_t* vec, size_t len) {
     size_t new_size = len * vec->elem_size;
 
     vec->ptr = realloc(vec->ptr, new_size);
-    vec->len = MIN(vec->len, len);
+    vec->len = min(vec->len, len);
     vec->capacity = len;
 }
 
@@ -242,7 +243,8 @@ static void __grow_vec(vec_t* vec) {
 vec_iter_t iter_from_vec(vec_t* vec) {
     assert(vec != NULL);
 
-    void* end = vec->ptr + (vec->len - 1) * vec->elem_size;
+    size_t offset = (vec->len - 1) * vec->elem_size;
+    void* end = VOID_PTR_ADD(vec->ptr, offset);
 
     return (vec_iter_t){
         .elem_size = vec->elem_size,
@@ -267,7 +269,7 @@ void* iter_next(vec_iter_t* iter) {
     if (iter->ptr <= iter->end) {
         void* tmp = iter->ptr;
 
-        iter->ptr += iter->elem_size;
+        iter->ptr = VOID_PTR_ADD(iter->ptr, iter->elem_size);
 
         return tmp;
     } else {

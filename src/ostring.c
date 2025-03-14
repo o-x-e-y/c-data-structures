@@ -113,7 +113,7 @@ void push_cstr_str(string_t* str, const char* s, size_t len) {
     assert(s != NULL);
 
     if (str->capacity <= str->len + len) {
-        size_t new_capacity = MIN(str->len * 2, str->capacity) + len;
+        size_t new_capacity = min(str->len * 2, str->capacity) + len;
 
         str->str = realloc(str->str, new_capacity * sizeof(char));
         str->capacity = new_capacity;
@@ -194,7 +194,7 @@ void resize_str(string_t* str, size_t len) {
     size_t new_size = len * sizeof(char);
 
     str->str = realloc(str->str, new_size);
-    str->len = MIN(str->len, len);
+    str->len = min(str->len, len);
     str->capacity = len;
 }
 

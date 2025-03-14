@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include "../src/headers/ovec.h"
 
-static void print_int(void* i) { printf("%d", *(int*)(i)); }
 static void mul_three(void* i) { CAST(i, int) = CAST(i, int) * 3; }
 
 static void test_vec() {
