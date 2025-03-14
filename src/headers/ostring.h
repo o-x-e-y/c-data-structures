@@ -17,9 +17,9 @@ typedef struct {
 } str_iter_t;
 
 string_t new_str(size_t capacity);
-string_t str_from(const char* str, size_t len);
+string_t from_cstr_str(const char* str, size_t len);
 void free_str(string_t* str);
-char* as_cstr(string_t* str);
+const char* as_cstr(string_t* str);
 
 size_t len_str(const string_t* str);
 size_t capacity_str(const string_t* str);

@@ -9,7 +9,7 @@
 typedef struct {
     size_t len;
     size_t capacity;
-    size_t elem_size;
+    const size_t elem_size;
 
     void* ptr;
 } vec_t;

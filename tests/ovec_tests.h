@@ -50,9 +50,9 @@ static void test_vec() {
     assert(CAST(get_vec(&vec, 1), int) == v);
     
     free_vec(&clone, NULL);
-    clone = clone_vec(&vec);
+    vec_t clone2 = clone_vec(&vec);
     
-    assert(eq_vec(&vec, &clone));
+    assert(eq_vec(&vec, &clone2));
     
     insert_vec(&vec, &v, 1);
     
@@ -62,11 +62,11 @@ static void test_vec() {
     remove_vec(&vec, 1);
     
     assert(len_vec(&vec) == 2);
-    assert(eq_vec(&vec, &clone));
+    assert(eq_vec(&vec, &clone2));
     
-    append_vec(&vec, &clone);
+    append_vec(&vec, &clone2);
     
-    assert(len_vec(&vec) == len_vec(&clone) * 2);
+    assert(len_vec(&vec) == len_vec(&clone2) * 2);
     assert(CAST(get_vec(&vec, 1), int) == CAST(get_vec(&vec, 3), int));
     
     reserve_vec(&vec, 20);
@@ -85,15 +85,15 @@ static void test_vec() {
     assert(capacity_vec(&vec) == 10);
     
     push_vec(&vec, &v);
-    free_vec(&clone, NULL);
-    clone = clone_vec(&vec);
+    free_vec(&clone2, NULL);
+    vec_t clone3 = clone_vec(&vec);
     
     map_vec(&vec, mul_three);
     
     vec_iter_t iter = iter_from_vec(&vec);
     
     for (int i = 0; i < len_vec(&vec); ++i) {
-        assert(CAST(get_vec(&vec, i), int) == CAST(get_vec(&clone, i), int) * 3);
+        assert(CAST(get_vec(&vec, i), int) == CAST(get_vec(&clone3, i), int) * 3);
         assert(CAST(get_vec(&vec, i), int) == CAST(iter_next(&iter), int));
     }
     
