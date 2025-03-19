@@ -282,10 +282,8 @@ static void __grow_str(string_t* str) {
     }
 }
 
-str_iter_t iter_from_cstr(const char* str) {
+str_iter_t iter_from_cstr(const char* str, size_t len) {
     assert(str != NULL);
-
-    size_t len = strlen(str);
 
     return (str_iter_t){
         .ptr = (char*)(str),

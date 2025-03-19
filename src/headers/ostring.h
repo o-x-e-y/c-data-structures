@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
+
+#define static_str(str) from_cstr_str(str, strlen(str))
 
 typedef struct {
     size_t len;
@@ -53,7 +56,7 @@ void print_str(const string_t* str);
 void debug_str(const string_t* str);
 void map_str(string_t* str, char map(char));
 
-str_iter_t iter_from_cstr(const char* str);
+str_iter_t iter_from_cstr(const char* str, size_t len);
 str_iter_t iter_from_str(const string_t* str);
 char str_iter_peek(const str_iter_t* iter);
 char str_iter_peek_n(const str_iter_t* iter, size_t n);
