@@ -114,14 +114,35 @@ static void test_string() {
     
     free_str(&clone);
     clone = clone_str(&str);
-    // const char* cstr = as_cstr(&clone);
-    // char* cstr_clone = (char*)malloc(clone.len + 1);
-    // memcpy(cstr_clone, cstr, clone.len + 1);
+    
+    const char* cstr = as_cstr(&clone);
+    char* cstr_clone = (char*)malloc(clone.len + 1);
+    memcpy(cstr_clone, cstr, clone.len + 1);
+    
+    assert(strncmp(as_cstr(&str), cstr, str.len) == 0);
     
     // reverse_str(&str);
     // reverse_cstr(cstr_clone, clone.len);
     
     // assert(strncmp(as_cstr(&str), cstr, str.len) == 0);
+    
+    // print
+    print_str(&str);
+    printf("\n");
+    
+    free_str(&clone);
+    clone = clone_str(&str);
+    
+    str_iter_t iter2 = iter_from_str(&str);
+    
+    assert(len_str(&clone) == 5);
+    
+    assert(str_iter_next(&iter2) == *clone.str++);
+    assert(str_iter_next(&iter2) == *clone.str++);
+    assert(str_iter_next(&iter2) == *clone.str++);
+    
+    assert(str_iter_peek(&iter2) == *clone.str);
+    assert(str_iter_peek(&iter2) == *clone.str);    
     
     clear_str(&str);
     
