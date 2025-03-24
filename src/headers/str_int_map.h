@@ -6,7 +6,7 @@
 
 #define FNV_OFFSET_BASIS 0xcbf29ce484222325ULL
 #define FNV_PRIME 0x100000001b3ULL
-#define DEFAULT_MAP_CAPACITY 2
+#define DEFAULT_MAP_CAPACITY 32
 
 typedef struct kv {
     const char* key;
