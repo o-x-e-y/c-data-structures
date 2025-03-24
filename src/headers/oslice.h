@@ -1,9 +1,9 @@
 #ifndef __OXEY_SLICE_H
 #define __OXEY_SLICE_H
 
-#include "util.h"
 #include "ostring.h"
 #include "string.h"
+#include "util.h"
 
 #define static_slice(str) from_cstr_slice(str, strlen(str))
 

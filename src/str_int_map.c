@@ -22,9 +22,7 @@ size_t inline hash_str(const char* key) {
 }
 
 // Just strcmp internally
-int inline cmp_str(const char* lhs, const char* rhs) {
-    return strcmp(lhs, rhs);
-}
+int inline cmp_str(const char* lhs, const char* rhs) { return strcmp(lhs, rhs); }
 
 map_t inline new_map() {
     return (map_t){
@@ -52,7 +50,7 @@ static size_t* get_bucket(const bucket_t* bucket, const char* key) {
             printf("key is null while trying to get something\n");
             return NULL;
         }
-        if (cmp_str(bucket->key, key) == 0) {            
+        if (cmp_str(bucket->key, key) == 0) {
             return (size_t*)&bucket->value;
         }
     } while ((bucket = bucket->next));
@@ -63,7 +61,7 @@ static size_t* get_bucket(const bucket_t* bucket, const char* key) {
 
 size_t* get_map(const map_t* map, const char* key) {
     size_t idx = hash_str(key) % map->capacity;
-    
+
     return get_bucket(&map->buckets[idx], key);
 }
 
@@ -102,7 +100,7 @@ static bool insert_bucket(bucket_t* bucket, const char* key, size_t value) {
 bool insert_map(map_t* map, const char* key, size_t value) {
     if (map->capacity / 4 * 3 < map->len) {
         map_t new = new_map_with_capacity(map->capacity * 2);
-        
+
         bucket_t* bucket;
         for (size_t i = 0; i < map->capacity; ++i) {
             bucket = &map->buckets[i];
@@ -112,13 +110,13 @@ bool insert_map(map_t* map, const char* key, size_t value) {
                 }
             } while ((bucket = bucket->next));
         }
-        
+
         printf("growing\n");
-        
+
         free_map(map);
         *map = new;
     }
-    
+
     size_t idx = hash_str(key) % map->capacity;
 
     if (insert_bucket(&map->buckets[idx], key, value)) {
@@ -142,7 +140,7 @@ static bool remove_bucket(bucket_t* bucket, const char* key) {
             free((void*)bucket->key);
             bucket->key = NULL;
             bucket->value = 0;
-            
+
             if (bucket->prev == NULL) {
                 if (bucket->next != NULL) {
                     bucket->key = bucket->next->key;
@@ -152,12 +150,12 @@ static bool remove_bucket(bucket_t* bucket, const char* key) {
             } else {
                 // if bucket->prev isn't NULL
                 bucket->prev->next = bucket->next;
-                
+
                 if (bucket->next != NULL) {
                     bucket->next->prev = bucket->prev;
                 }
             }
-            
+
             return true;
         }
     } while ((bucket = bucket->next));
@@ -168,7 +166,7 @@ static bool remove_bucket(bucket_t* bucket, const char* key) {
 
 bool remove_map(map_t* map, const char* key) {
     size_t idx = hash_str(key) % map->capacity;
-    
+
     return remove_bucket(&map->buckets[idx], key);
 }
 
@@ -179,7 +177,7 @@ void clear_map(map_t* map) {
 
 static void free_bucket(bucket_t* bucket) {
     assert(bucket != NULL);
-    
+
     do {
         if (bucket->key != NULL) {
             free((void*)bucket->key);
@@ -189,15 +187,15 @@ static void free_bucket(bucket_t* bucket) {
 
 void free_map(map_t* map) {
     assert(map != NULL);
-    
+
     if (map->buckets == NULL) {
         return;
     }
-    
+
     for (size_t i = 0; i < map->capacity; ++i) {
         free_bucket(&map->buckets[i]);
     }
-    
+
     free(map->buckets);
     map = NULL;
 }
